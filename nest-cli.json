@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/Meetup_API_Microservices/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/Meetup_API_Microservices/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/Meetup_API_Microservices",
+  "projects": {
+    "Meetup_API_Microservices": {
+      "type": "application",
+      "root": "apps/Meetup_API_Microservices",
+      "entryFile": "main",
+      "sourceRoot": "apps/Meetup_API_Microservices/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/Meetup_API_Microservices/tsconfig.app.json"
+      }
+    },
+    "auth": {
+      "type": "application",
+      "root": "apps/auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auth/tsconfig.app.json"
+      }
+    },
+    "meetups": {
+      "type": "application",
+      "root": "apps/meetups",
+      "entryFile": "main",
+      "sourceRoot": "apps/meetups/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/meetups/tsconfig.app.json"
+      }
+    }
+  }
+}
