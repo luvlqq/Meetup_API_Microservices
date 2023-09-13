@@ -1,0 +1,77 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:15
+    ports:
+      - '5432:5432'
+    env_file:
+      - .env
+
+  postgres_admin:
+    image: dpage/pgadmin4
+    networks:
+      - global
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - '15432:80'
+
+  gateway:
+    build:
+      context: ./
+      dockerfile: ./apps/api-gateway/Dockerfile
+      target: development
+    networks:
+      - global
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - auth
+      - postgres
+      - meetups
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev api-gateway
+
+  auth:
+    build:
+      context: ./
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    networks:
+      - global
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - meetups
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev auth
+
+  meetups:
+    build:
+      context: ./
+      dockerfile: ./apps/meetups/Dockerfile
+      target: development
+    networks:
+      - global
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev meetups
+
+networks:
+  global:
+    external: true
