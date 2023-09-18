@@ -10,7 +10,7 @@ RUN npx prisma generate
 
 COPY . .
 
-RUN npm run build api-gareway
+RUN npm run build api-gateway
 
 CMD [ "node", "dist/src/main" ]
 CMD [ "npm", "run", "start:migrate:docker" ]

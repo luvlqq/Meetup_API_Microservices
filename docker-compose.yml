@@ -10,8 +10,6 @@ services:
 
   postgres_admin:
     image: dpage/pgadmin4
-    networks:
-      - global
     depends_on:
       - postgres
     env_file:
@@ -19,21 +17,23 @@ services:
     ports:
       - '15432:80'
 
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - '5672:5672'
+
   gateway:
     build:
       context: ./
       dockerfile: ./apps/api-gateway/Dockerfile
       target: development
-    networks:
-      - global
-    ports:
-      - '3000:3000'
     env_file:
       - .env
     depends_on:
       - auth
-      - postgres
       - meetups
+      - postgres
+      - rabbitmq
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -44,13 +44,14 @@ services:
       context: ./
       dockerfile: ./apps/auth/Dockerfile
       target: development
-    networks:
-      - global
+    ports:
+      - '3000:3000'
     env_file:
       - .env
     depends_on:
       - postgres
       - meetups
+      - rabbitmq
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -61,17 +62,14 @@ services:
       context: ./
       dockerfile: ./apps/meetups/Dockerfile
       target: development
-    networks:
-      - global
+    ports:
+      - '3001:3001'
     env_file:
       - .env
     depends_on:
       - postgres
+      - rabbitmq
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     command: npm run start:dev meetups
-
-networks:
-  global:
-    external: true

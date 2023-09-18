@@ -2,16 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { ApiGatewayModule } from './modules/api-gateway/api-gateway.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from '@app/common/swagger/init/init.swagger';
-import { ConfigService } from '@nestjs/config';
+import { RmqService } from '@app/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
-  app.useGlobalPipes(new ValidationPipe());
-  app.enableShutdownHooks();
-
-  const configService = app.get(ConfigService);
+  const rmqService = app.get<RmqService>(RmqService);
 
   setupSwagger(app);
+
+  app.useGlobalPipes(new ValidationPipe());
+  app.enableShutdownHooks();
+  app.connectMicroservice(rmqService.getOptions('GATEWAY'));
 
   process.on('SIGINT', async () => {
     Logger.log('Server close by user');
@@ -25,6 +26,6 @@ async function bootstrap() {
     process.exit(0);
   });
 
-  await app.listen(3000);
+  await app.startAllMicroservices();
 }
 bootstrap();
