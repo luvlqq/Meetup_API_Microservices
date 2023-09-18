@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -22,12 +21,8 @@ import {
 import { CreateMeetupDto, UpdateMeetupDto, GetMeetupDto } from './dto';
 import { GetCurrentUserId } from '../../../../auth/src/modules/auth/decorators';
 import { MeetupResponse } from './response';
-import {
-  UnauthorizedError,
-  AccessDenied,
-  BadRequestError,
-  DtoBadRequest,
-} from '@app/common/swagger/responses';
+import { AccessDenied } from '@app/common/swagger/responses';
+import { SwaggerMeetups } from '@app/common/swagger/decorators/meetup.decorator';
 
 @ApiTags('Meetups')
 @Controller('meetups')
@@ -37,29 +32,7 @@ export class MeetupsController {
   @Get()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all meetups' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Success',
-    isArray: true,
-    schema: {
-      $ref: getSchemaPath(MeetupResponse),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Bad Request',
-    type: BadRequestError,
-    schema: {
-      $ref: getSchemaPath(BadRequestError),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized',
-    schema: {
-      $ref: getSchemaPath(UnauthorizedError),
-    },
-  })
+  @SwaggerMeetups()
   public async getAllMeetups(
     @Query() dto: GetMeetupDto,
   ): Promise<MeetupResponse[] | string> {
@@ -70,28 +43,7 @@ export class MeetupsController {
   @ApiBearerAuth()
   @ApiExtraModels(MeetupResponse)
   @ApiOperation({ summary: 'Get meetup by id' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Success',
-    schema: {
-      $ref: getSchemaPath(MeetupResponse),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Bad Request',
-    schema: {
-      $ref: getSchemaPath(BadRequestError),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized',
-    type: UnauthorizedError,
-    schema: {
-      $ref: getSchemaPath(UnauthorizedError),
-    },
-  })
+  @SwaggerMeetups()
   public async getMeetupById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<MeetupResponse | string> {
@@ -102,33 +54,12 @@ export class MeetupsController {
   @ApiBearerAuth()
   @ApiExtraModels(MeetupResponse)
   @ApiOperation({ summary: 'Create a meetup' })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Success',
-    schema: {
-      $ref: getSchemaPath(MeetupResponse),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Bad Request',
-    type: DtoBadRequest,
-    schema: {
-      $ref: getSchemaPath(DtoBadRequest),
-    },
-  })
+  @SwaggerMeetups()
   @ApiResponse({
     status: 403,
     description: 'Access denied',
     schema: {
       $ref: getSchemaPath(AccessDenied),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized',
-    schema: {
-      $ref: getSchemaPath(UnauthorizedError),
     },
   })
   public async createAMeetup(
@@ -141,33 +72,13 @@ export class MeetupsController {
   @Patch(':id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Change meetup parameters by id' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Success',
-    schema: {
-      $ref: getSchemaPath(MeetupResponse),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Bad Request',
-    schema: {
-      $ref: getSchemaPath(DtoBadRequest),
-    },
-  })
+  @SwaggerMeetups()
   @ApiResponse({
     status: 403,
     description: 'Access denied',
     type: AccessDenied,
     schema: {
       $ref: getSchemaPath(AccessDenied),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized',
-    schema: {
-      $ref: getSchemaPath(UnauthorizedError),
     },
   })
   public async changeInfoInMeetup(
@@ -181,32 +92,12 @@ export class MeetupsController {
   @Delete(':id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete meetup by id' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Success',
-    schema: {
-      $ref: getSchemaPath(MeetupResponse),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Bad Request',
-    schema: {
-      $ref: getSchemaPath(BadRequestError),
-    },
-  })
+  @SwaggerMeetups()
   @ApiResponse({
     status: 403,
     description: 'Access denied',
     schema: {
       $ref: getSchemaPath(AccessDenied),
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized',
-    schema: {
-      $ref: getSchemaPath(UnauthorizedError),
     },
   })
   public async deleteMeetupById(
