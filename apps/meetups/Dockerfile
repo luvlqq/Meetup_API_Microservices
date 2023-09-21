@@ -13,6 +13,7 @@ COPY . .
 RUN npm run build meetups
 
 CMD [ "node", "dist/src/main" ]
+CMD [ "npx", "prisma", "migrate", "dev" ]
 CMD [ "npm", "run", "start:migrate:docker" ]
 
 #FROM node:18 as production

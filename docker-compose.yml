@@ -3,6 +3,7 @@ version: '3'
 services:
   postgres:
     image: postgres:15
+    restart: always
     ports:
       - '5432:5432'
     env_file:
@@ -18,9 +19,13 @@ services:
       - '15432:80'
 
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    volumes:
+      - /var/lib/rabbitmq
     ports:
       - '5672:5672'
+      - '15672:15672'
 
   gateway:
     build:
@@ -28,7 +33,7 @@ services:
       dockerfile: ./apps/api-gateway/Dockerfile
       target: development
     env_file:
-      - .env
+      - ./apps/api-gateway/.env
     depends_on:
       - auth
       - meetups
@@ -37,7 +42,7 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: npm run start:dev api-gateway
+    command: npm run start:dev api-gateway && npx prisma migrate dev
 
   auth:
     build:
@@ -55,7 +60,7 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: npm run start:dev auth
+    command: npm run start:dev auth && npx prisma migrate dev
 
   meetups:
     build:
@@ -72,4 +77,4 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: npm run start:dev meetups
+    command: npm run start:dev meetups && npx prisma migrate dev
