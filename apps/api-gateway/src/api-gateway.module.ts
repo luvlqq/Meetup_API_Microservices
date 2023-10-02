@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ApiGatewayController } from './api-gateway.controller';
-import { ApiGatewayService } from './api-gateway.service';
 import { ConfigModule } from '@nestjs/config';
 import configuration from '@app/common/config/configService/configuration';
+import { MeetupsMicroserviceModule } from './modules/meetups/meetups.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 import { RmqModule } from '@app/common';
-import { MeetupsModule } from '../meetups/meetups.module';
+import { MEETUPS_SERVICE } from '../../meetups/src/constants';
 
 @Module({
   imports: [
@@ -12,10 +13,9 @@ import { MeetupsModule } from '../meetups/meetups.module';
       load: [configuration],
       isGlobal: true,
     }),
-    RmqModule,
-    MeetupsModule,
+    MeetupsMicroserviceModule,
+    AuthModule,
+    UsersModule,
   ],
-  controllers: [ApiGatewayController],
-  providers: [ApiGatewayService],
 })
 export class ApiGatewayModule {}

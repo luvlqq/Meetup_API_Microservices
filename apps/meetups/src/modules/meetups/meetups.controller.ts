@@ -1,67 +1,40 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
-import { MeetupsService } from './meetups.service';
-import {
-  ApiBearerAuth,
-  ApiExtraModels,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  getSchemaPath,
-} from '@nestjs/swagger';
-import { CreateMeetupDto, UpdateMeetupDto, GetMeetupDto } from './dto';
-import { GetCurrentUserId } from '../../../../auth/src/modules/auth/decorators';
-import { MeetupResponse } from './response';
-import { AccessDenied } from '@app/common/swagger/responses';
-import { SwaggerMeetups } from '@app/common/swagger/decorators/meetup.decorator';
+import {Body, Controller, Param, ParseIntPipe, Query} from '@nestjs/common';
+import {MeetupsService} from './meetups.service';
+import {CreateMeetupDto, GetMeetupDto, UpdateMeetupDto} from './dto';
+import {GetCurrentUserId} from '../../../../auth/src/modules/auth/decorators';
+import {MeetupResponse} from './response';
+import {Ctx, EventPattern, MessagePattern, Payload, RmqContext,} from '@nestjs/microservices';
+import {ALL_MEETUPS} from './constants';
+import {RmqService} from '@app/common';
 
-@ApiTags('Meetups')
-@Controller('meetups')
+@Controller()
 export class MeetupsController {
-  constructor(private readonly meetupsService: MeetupsService) {}
+  constructor(
+    private readonly meetupsService: MeetupsService,
+    private readonly rmqService: RmqService,
+  ) {}
 
-  @Get()
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all meetups' })
-  @SwaggerMeetups()
+  @EventPattern(ALL_MEETUPS)
   public async getAllMeetups(
     @Query() dto: GetMeetupDto,
   ): Promise<MeetupResponse[] | string> {
     return this.meetupsService.getAllMeetups(dto);
   }
 
-  @Get(':id')
-  @ApiBearerAuth()
-  @ApiExtraModels(MeetupResponse)
-  @ApiOperation({ summary: 'Get meetup by id' })
-  @SwaggerMeetups()
+  //
+  @MessagePattern('testss')
+  public async testss(@Payload() @Ctx() context: RmqContext) {
+    return await this.meetupsService.testss();
+  }
+
+  @EventPattern()
   public async getMeetupById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<MeetupResponse | string> {
     return this.meetupsService.getMeetupById(id);
   }
 
-  @Post('createMeetup')
-  @ApiBearerAuth()
-  @ApiExtraModels(MeetupResponse)
-  @ApiOperation({ summary: 'Create a meetup' })
-  @SwaggerMeetups()
-  @ApiResponse({
-    status: 403,
-    description: 'Access denied',
-    schema: {
-      $ref: getSchemaPath(AccessDenied),
-    },
-  })
+  @EventPattern()
   public async createAMeetup(
     @GetCurrentUserId() userId: number,
     @Body() dto: CreateMeetupDto,
@@ -69,18 +42,7 @@ export class MeetupsController {
     return this.meetupsService.createAMeetup(userId, dto);
   }
 
-  @Patch(':id')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Change meetup parameters by id' })
-  @SwaggerMeetups()
-  @ApiResponse({
-    status: 403,
-    description: 'Access denied',
-    type: AccessDenied,
-    schema: {
-      $ref: getSchemaPath(AccessDenied),
-    },
-  })
+  @EventPattern()
   public async changeInfoInMeetup(
     @GetCurrentUserId() userId: number,
     @Param('id', ParseIntPipe) id: number,
@@ -89,17 +51,7 @@ export class MeetupsController {
     return this.meetupsService.changeInfoInMeetup(userId, id, dto);
   }
 
-  @Delete(':id')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete meetup by id' })
-  @SwaggerMeetups()
-  @ApiResponse({
-    status: 403,
-    description: 'Access denied',
-    schema: {
-      $ref: getSchemaPath(AccessDenied),
-    },
-  })
+  @EventPattern()
   public async deleteMeetupById(
     @GetCurrentUserId() userId: number,
     @Param('id', ParseIntPipe) id: number,

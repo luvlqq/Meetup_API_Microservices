@@ -11,13 +11,14 @@ import { MeetupsRepository } from './meetups.repository';
 import { MEETUPS_SERVICE } from '../../constants';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { PrismaService } from '@app/common/db/prisma.service';
 
 @Injectable()
 export class MeetupsService {
   constructor(
     private readonly repository: MeetupsRepository,
     private readonly logger: Logger,
-    @Inject(MEETUPS_SERVICE) private readonly gatewayClient: ClientProxy,
+    private readonly prisma: PrismaService,
   ) {}
 
   public async createAMeetup(
@@ -28,14 +29,15 @@ export class MeetupsService {
       await this.getUserRole(userId);
       const result = await this.repository.createAMeetup(userId, dto);
       this.logger.log('Create a meetup: ', result);
-      await lastValueFrom(
-        this.gatewayClient.emit('meetup_created', { dto: dto }),
-      );
       return result;
     } catch (e) {
       await this.logger.error(e);
       return e;
     }
+  }
+
+  public async testss() {
+    await this.prisma.user.findMany();
   }
 
   public async getAllMeetups(

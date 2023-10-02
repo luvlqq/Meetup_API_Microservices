@@ -21,12 +21,15 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/Meetup_API_Microservices/test/jest-e2e.json"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed"
+  },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^3.0.1",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^10.1.1",
-    "@nestjs/microservices": "^9.4.3",
+    "@nestjs/microservices": "^9.4.2",
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^7.1.10",
