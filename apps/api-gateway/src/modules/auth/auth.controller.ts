@@ -34,25 +34,25 @@ export class AuthController {
   ) {}
 
   // @Public()
-  // @Post('register')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // @ApiOperation({ summary: 'Register user account' })
-  // @ApiResponse({ status: 204, description: 'Success' })
-  // @ApiResponse({
-  //   status: HttpStatus.BAD_REQUEST,
-  //   description: 'Bad request',
-  //   type: DtoBadRequest,
-  //   schema: {
-  //     $ref: getSchemaPath(DtoBadRequest),
-  //   },
-  // })
-  // public async register(
-  //   @Body() dto: AuthDto,
-  //   @Res({ passthrough: true }) res: Response,
-  // ): Promise<void> {
-  //   await this.authService.register(dto, res);
-  // }
-  //
+  @Post('register')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Register user account' })
+  @ApiResponse({ status: 204, description: 'Success' })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad request',
+    type: DtoBadRequest,
+    schema: {
+      $ref: getSchemaPath(DtoBadRequest),
+    },
+  })
+  public async register(
+    @Body() dto: AuthDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    await this.authService.register(dto, res);
+  }
+
   // @Public()
   // @Post('login')
   // @HttpCode(HttpStatus.NO_CONTENT)
@@ -79,7 +79,7 @@ export class AuthController {
   // ): Promise<void> {
   //   await this.authService.login(dto, res);
   // }
-  //
+
   // @Post('signOut')
   // @HttpCode(HttpStatus.OK)
   // @ApiOperation({ summary: 'Sign out from account' })
@@ -100,7 +100,7 @@ export class AuthController {
   //   res.clearCookie('refreshToken');
   //   return this.authService.signOut(userId);
   // }
-  //
+
   // @Public()
   // @UseGuards(RtGuard)
   // @Post('refresh')

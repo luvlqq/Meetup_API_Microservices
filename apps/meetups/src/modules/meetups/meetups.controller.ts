@@ -1,11 +1,17 @@
-import {Body, Controller, Param, ParseIntPipe, Query} from '@nestjs/common';
-import {MeetupsService} from './meetups.service';
-import {CreateMeetupDto, GetMeetupDto, UpdateMeetupDto} from './dto';
-import {GetCurrentUserId} from '../../../../auth/src/modules/auth/decorators';
-import {MeetupResponse} from './response';
-import {Ctx, EventPattern, MessagePattern, Payload, RmqContext,} from '@nestjs/microservices';
-import {ALL_MEETUPS} from './constants';
-import {RmqService} from '@app/common';
+import { Body, Controller, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { MeetupsService } from './meetups.service';
+import { CreateMeetupDto, GetMeetupDto, UpdateMeetupDto } from './dto';
+import { GetCurrentUserId } from '../../../../auth/src/modules/auth/decorators';
+import { MeetupResponse } from './response';
+import {
+  Ctx,
+  EventPattern,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
+import { ALL_MEETUPS, CREATE_MEETUP } from './constants';
+import { RmqService } from '@app/common';
 
 @Controller()
 export class MeetupsController {
@@ -23,8 +29,8 @@ export class MeetupsController {
 
   //
   @MessagePattern('testss')
-  public async testss(@Payload() @Ctx() context: RmqContext) {
-    return await this.meetupsService.testss();
+  public async testss() {
+    return this.meetupsService.testss();
   }
 
   @EventPattern()
@@ -34,7 +40,7 @@ export class MeetupsController {
     return this.meetupsService.getMeetupById(id);
   }
 
-  @EventPattern()
+  @EventPattern(CREATE_MEETUP)
   public async createAMeetup(
     @GetCurrentUserId() userId: number,
     @Body() dto: CreateMeetupDto,

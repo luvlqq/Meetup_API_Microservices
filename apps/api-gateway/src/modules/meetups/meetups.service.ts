@@ -22,7 +22,7 @@ export class MeetupsService {
   }
 
   public async testss() {
-    return await lastValueFrom(this.meetupClient.emit('testss', {}));
+    return await lastValueFrom(this.meetupClient.send('testss', {}));
   }
 
   public async getMeetupById(id: number) {

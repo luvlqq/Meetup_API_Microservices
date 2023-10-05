@@ -37,7 +37,7 @@ export class MeetupsService {
   }
 
   public async testss() {
-    await this.prisma.user.findMany();
+    return this.prisma.user.findMany();
   }
 
   public async getAllMeetups(

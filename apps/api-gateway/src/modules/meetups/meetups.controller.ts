@@ -59,7 +59,7 @@ export class MeetupsController {
   }
 
   @Post('createMeetup')
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @ApiExtraModels(MeetupResponse)
   @ApiOperation({ summary: 'Create a meetup' })
   @SwaggerMeetups()

@@ -9,6 +9,7 @@ import { AtStrategy, RtStrategy } from './strategies';
 import { PrismaModule } from '@app/common/db/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from '@app/common/config/configService/configuration';
+import { RmqModule } from '@app/common';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import configuration from '@app/common/config/configService/configuration';
       load: [configuration],
       isGlobal: true,
     }),
+    RmqModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -29,5 +31,6 @@ import configuration from '@app/common/config/configService/configuration';
     AtStrategy,
     Logger,
   ],
+  exports: [AuthRepository, JwtTokensService],
 })
-export class AuthModule {}
+export class AuthMicroserviceModule {}

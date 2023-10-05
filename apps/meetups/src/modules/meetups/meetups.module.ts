@@ -7,7 +7,7 @@ import { RmqModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
 import { AtGuard } from '../../../../auth/src/modules/auth/guards';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthModule } from '../../../../auth/src/modules/auth/auth.module';
+import { AuthMicroserviceModule } from '../../../../auth/src/modules/auth/auth.module';
 import { UsersModule } from '../../../../auth/src/modules/users/users.module';
 
 @Module({
@@ -15,9 +15,10 @@ import { UsersModule } from '../../../../auth/src/modules/users/users.module';
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     PrismaModule,
     RmqModule,
-    AuthModule,
+    AuthMicroserviceModule,
     UsersModule,
   ],
+  controllers: [MeetupsController],
   providers: [
     MeetupsService,
     MeetupsRepository,
