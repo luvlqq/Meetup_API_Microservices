@@ -8,7 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AtGuard } from '../../../../auth/src/modules/auth/guards';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthMicroserviceModule } from '../../../../auth/src/modules/auth/auth.module';
-import { UsersModule } from '../../../../auth/src/modules/users/users.module';
+import { UsersMicroserviceModule } from '../../../../auth/src/modules/users/users.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { UsersModule } from '../../../../auth/src/modules/users/users.module';
     PrismaModule,
     RmqModule,
     AuthMicroserviceModule,
-    UsersModule,
+    UsersMicroserviceModule,
   ],
   controllers: [MeetupsController],
   providers: [

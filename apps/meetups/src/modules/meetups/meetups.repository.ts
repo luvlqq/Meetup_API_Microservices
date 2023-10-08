@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateMeetupDto, GetMeetupDto, UpdateMeetupDto } from './dto';
 import { Meetup, Prisma, User } from '@prisma/client';
 import { PrismaService } from '@app/common/db/prisma.service';
@@ -31,6 +31,29 @@ export class MeetupsRepository {
     };
 
     return this.prisma.meetup.findMany(query);
+  }
+
+  public async getMeetupsByCords(long: number, lat: number) {
+    Logger.log(`Coords: ${long}, ${lat}`);
+    try {
+      const meetups = await this.prisma.meetup.findMany({
+        where: {
+          AND: {
+            long: {
+              gte: long - 0.1,
+              lte: long + 0.1,
+            },
+            lat: {
+              gte: lat - 0.1,
+              lte: lat + 0.1,
+            },
+          },
+        },
+      });
+      return meetups;
+    } catch (e) {
+      throw e;
+    }
   }
 
   public async createAMeetup(

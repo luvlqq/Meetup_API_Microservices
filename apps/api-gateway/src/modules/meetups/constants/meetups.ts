@@ -4,3 +4,4 @@ export const CREATE_MEETUP = 'meetups/createAMeetup';
 export const CHANGE_INFO = 'meetups/changeInfoInMeetup';
 export const DELETE_MEETUP = 'meetups/deleteMeetupById';
 export const TEST = 'meetups/testss';
+export const GET_MEETUP_BY_CORDS = 'meetups/getMeetupsByCords';

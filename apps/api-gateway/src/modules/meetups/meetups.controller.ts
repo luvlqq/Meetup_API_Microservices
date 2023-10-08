@@ -3,10 +3,12 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { MeetupsService } from './meetups.service';
 import {
@@ -17,11 +19,12 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { CreateMeetupDto, UpdateMeetupDto } from './dto';
+import { CreateMeetupDto, GetMeetupDto, UpdateMeetupDto } from './dto';
 import { GetCurrentUserId } from '../../../../auth/src/modules/auth/decorators';
 import { MeetupResponse } from './response';
 import { AccessDenied } from '@app/common/swagger/responses';
 import { SwaggerMeetups } from '@app/common/swagger/decorators/meetup.decorator';
+import { CordsDto } from './dto/cords.dto';
 
 @ApiTags('Meetups')
 @Controller('meetups')
@@ -29,22 +32,24 @@ export class MeetupsController {
   constructor(private readonly meetupsService: MeetupsService) {}
 
   @Get()
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all meetups' })
   @SwaggerMeetups()
-  public async getAllMeetups() {
-    return this.meetupsService.getAllMeetups();
+  public async getAllMeetups(
+    @Body() dto: GetMeetupDto,
+  ): Promise<MeetupResponse | string> {
+    return this.meetupsService.getAllMeetups(dto);
   }
 
-  /*
-   * Собственно вот ошибка:
-   * [Nest] 229  - 10/02/2023, 7:58:26 AM    WARN [Server] An unsupported event was received. It has been acknowledged, so it will not be re-delivered. Pattern: testss
-   * Все пробовал на этом тестовом контроллере
-   * */
-
-  @Get('test')
-  public async tests() {
-    return await this.meetupsService.testss();
+  @Get('cords')
+  public async getMeetupsByCords(
+    @Query('long') long: number,
+    @Query('lat') lat: number,
+  ) {
+    Logger.log(`Gateway controller: ${long}, ${lat}`);
+    const parsedLong = parseFloat(String(long));
+    const parsedLat = parseFloat(String(lat));
+    return this.meetupsService.getMeetupsByCords(parsedLong, parsedLat);
   }
 
   @Get(':id')
@@ -59,7 +64,7 @@ export class MeetupsController {
   }
 
   @Post('createMeetup')
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @ApiExtraModels(MeetupResponse)
   @ApiOperation({ summary: 'Create a meetup' })
   @SwaggerMeetups()

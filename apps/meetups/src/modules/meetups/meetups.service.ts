@@ -1,16 +1,12 @@
 import {
   BadRequestException,
   HttpException,
-  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
 import { CreateMeetupDto, UpdateMeetupDto, GetMeetupDto } from './dto';
 import { MeetupResponse } from './response';
 import { MeetupsRepository } from './meetups.repository';
-import { MEETUPS_SERVICE } from '../../constants';
-import { ClientProxy } from '@nestjs/microservices';
-import { lastValueFrom } from 'rxjs';
 import { PrismaService } from '@app/common/db/prisma.service';
 
 @Injectable()
@@ -18,7 +14,6 @@ export class MeetupsService {
   constructor(
     private readonly repository: MeetupsRepository,
     private readonly logger: Logger,
-    private readonly prisma: PrismaService,
   ) {}
 
   public async createAMeetup(
@@ -31,13 +26,9 @@ export class MeetupsService {
       this.logger.log('Create a meetup: ', result);
       return result;
     } catch (e) {
-      await this.logger.error(e);
+      this.logger.error(e);
       return e;
     }
-  }
-
-  public async testss() {
-    return this.prisma.user.findMany();
   }
 
   public async getAllMeetups(
@@ -48,7 +39,18 @@ export class MeetupsService {
       this.logger.log('Show all meetups');
       return result;
     } catch (e) {
-      await this.logger.error(e);
+      this.logger.error(e);
+      return e;
+    }
+  }
+
+  public async getMeetupsByCords(long: number, lat: number) {
+    try {
+      const result = await this.repository.getMeetupsByCords(long, lat);
+      this.logger.log('Meetup coords find');
+      return result;
+    } catch (e) {
+      this.logger.error(e);
       return e;
     }
   }
@@ -76,7 +78,7 @@ export class MeetupsService {
       this.logger.log(`Delete meetup. Id: ${id}`);
       return result;
     } catch (e) {
-      await this.logger.error(e);
+      this.logger.error(e);
       return e;
     }
   }
@@ -94,7 +96,7 @@ export class MeetupsService {
       this.logger.log(`Change meetup info. Id: ${id}`, result);
       return result;
     } catch (e) {
-      await this.logger.error(e);
+      this.logger.error(e);
       return e;
     }
   }

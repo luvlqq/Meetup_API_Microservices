@@ -11,7 +11,7 @@ datasource db {
 
 model User {
   id              Int      @id @default(autoincrement())
-  login           String   @unique
+  email           String   @unique
   password        String
   role            UserRole @default(USER)
   hashRt          String?
@@ -26,6 +26,8 @@ model Meetup {
   place           String
   date            DateTime
   tags            String[]
+  long            Float
+  lat             Float
   meetupOwner     User?    @relation("MeetupCreator", fields: [meetupCreator], references: [id])
   meetupCreator   Int?
   meetupFollowers User[]   @relation("MeetupFollower")
