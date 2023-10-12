@@ -1,6 +1,6 @@
 export class Payload {
   sub: number;
-  login: string;
+  email: string;
   iat: number;
   exp: number;
 }
