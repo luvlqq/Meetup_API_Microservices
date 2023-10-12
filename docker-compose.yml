@@ -18,15 +18,6 @@ services:
     ports:
       - '15432:80'
 
-  prisma-studio:
-    container_name: prisma-studio
-    image: timothyjmiller/prisma-studio:latest
-    restart: unless-stopped
-    env_file:
-      - .env
-    ports:
-      - '5555:5555'
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
