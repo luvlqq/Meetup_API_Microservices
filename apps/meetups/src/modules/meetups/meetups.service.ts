@@ -7,7 +7,6 @@ import {
 import { CreateMeetupDto, UpdateMeetupDto, GetMeetupDto } from './dto';
 import { MeetupResponse } from './response';
 import { MeetupsRepository } from './meetups.repository';
-import { PrismaService } from '@app/common/db/prisma.service';
 
 @Injectable()
 export class MeetupsService {

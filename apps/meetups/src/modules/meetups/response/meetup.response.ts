@@ -17,6 +17,12 @@ export class MeetupResponse {
   date: Date;
 
   @ApiProperty()
+  long: number;
+
+  @ApiProperty()
+  lat: number;
+
+  @ApiProperty()
   tags: string[];
 
   @ApiProperty()

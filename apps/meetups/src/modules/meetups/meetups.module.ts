@@ -9,6 +9,7 @@ import { AtGuard } from '../../../../auth/src/modules/auth/guards';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthMicroserviceModule } from '../../../../auth/src/modules/auth/auth.module';
 import { UsersMicroserviceModule } from '../../../../auth/src/modules/users/users.module';
+import { ReportsMicroserviceModule } from '../reports/reports.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UsersMicroserviceModule } from '../../../../auth/src/modules/users/user
     RmqModule,
     AuthMicroserviceModule,
     UsersMicroserviceModule,
+    ReportsMicroserviceModule,
   ],
   controllers: [MeetupsController],
   providers: [

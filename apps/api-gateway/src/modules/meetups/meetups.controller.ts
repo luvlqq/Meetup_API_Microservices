@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  Logger,
+  Header,
   Param,
   ParseIntPipe,
   Patch,
@@ -24,7 +24,6 @@ import { GetCurrentUserId } from '../../../../auth/src/modules/auth/decorators';
 import { MeetupResponse } from './response';
 import { AccessDenied } from '@app/common/swagger/responses';
 import { SwaggerMeetups } from '@app/common/swagger/decorators/meetup.decorator';
-import { CordsDto } from './dto/cords.dto';
 
 @ApiTags('Meetups')
 @Controller('meetups')
@@ -42,11 +41,13 @@ export class MeetupsController {
   }
 
   @Get('cords')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get meetups by cords' })
+  @SwaggerMeetups()
   public async getMeetupsByCords(
     @Query('long') long: number,
     @Query('lat') lat: number,
-  ) {
-    Logger.log(`Gateway controller: ${long}, ${lat}`);
+  ): Promise<MeetupResponse | string> {
     const parsedLong = parseFloat(String(long));
     const parsedLat = parseFloat(String(lat));
     return this.meetupsService.getMeetupsByCords(parsedLong, parsedLat);
@@ -118,5 +119,25 @@ export class MeetupsController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<MeetupResponse | string> {
     return this.meetupsService.deleteMeetupById(userId, id);
+  }
+
+  @Get('csv')
+  @Header('Content-Type', 'text/csv')
+  @Header('Content-Disposition', 'attachment; filename=meetups.csv')
+  public async generateCsv() {
+    return this.meetupsService.generateCsv();
+  }
+
+  @Get('pdf')
+  @ApiBearerAuth()
+  @Header('Content-Type', 'text/pdf')
+  @Header('Content-Disposition', 'attachment; filename=meetups.pdf')
+  public async generatePdf() {
+    return this.meetupsService.generatePdf();
+  }
+
+  @Get('test')
+  async test() {
+    return 'asd';
   }
 }

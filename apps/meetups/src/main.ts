@@ -8,7 +8,7 @@ async function bootstrap() {
   const logger = new Logger();
   const app = await NestFactory.create(MeetupsModule, { cors: true });
   const rmqService = app.get<RmqService>(RmqService);
-  app.connectMicroservice<RmqOptions>(rmqService.getOptions('MEETUPS'));
+  app.connectMicroservice<RmqOptions>(rmqService.getOptions('MEETUPS', true));
   app.useGlobalPipes(new ValidationPipe());
   await app.startAllMicroservices();
   logger.log('Meetups is started', 'Microservice Init');
