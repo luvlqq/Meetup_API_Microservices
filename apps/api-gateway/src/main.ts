@@ -10,8 +10,8 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  app.useGlobalPipes(new ValidationPipe());
   app.enableShutdownHooks();
+  app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
 
   process.on('SIGINT', async () => {
