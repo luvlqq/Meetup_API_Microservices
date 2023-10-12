@@ -5,7 +5,7 @@ export class AuthDto {
   @ApiProperty({ description: 'User login', nullable: false })
   @IsNotEmpty()
   @IsString()
-  login: string;
+  email: string;
 
   @ApiProperty({ description: 'User password', nullable: false })
   @IsNotEmpty()

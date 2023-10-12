@@ -7,15 +7,32 @@ import { AuthRepository } from '../../../../auth/src/modules/auth/auth.repositor
 import { JwtTokensService } from '../../../../auth/src/modules/auth/jwt.tokens.service';
 import { AuthMicroserviceModule } from '../../../../auth/src/modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { UsersGatewayModule } from './users/users.module';
+import { ConfigModule } from '@nestjs/config';
+import configuration from '@app/common/config/configService/configuration';
+import { GoogleStrategy } from './strategies';
 
 @Module({
   imports: [
     RmqModule.register({ name: 'AUTH' }),
+    ConfigModule.forRoot({
+      load: [configuration],
+      isGlobal: true,
+    }),
     PrismaModule,
     AuthMicroserviceModule,
     JwtModule.register({}),
+    UsersGatewayModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthRepository, JwtTokensService],
+  providers: [
+    {
+      provide: 'AUTH_SERVICE',
+      useClass: AuthService,
+    },
+    AuthRepository,
+    JwtTokensService,
+    GoogleStrategy,
+  ],
 })
-export class AuthModule {}
+export class AuthGatewayModule {}

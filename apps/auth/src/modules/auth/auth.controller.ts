@@ -1,32 +1,16 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  getSchemaPath,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthDto } from './dto';
-import { GetCurrentUser, GetCurrentUserId } from './decorators';
-import { Public } from './decorators';
-import { RtGuard } from './guards';
-import { Response } from 'express';
-import {
-  DtoBadRequest,
-  DtoUnauthorized,
-  UnauthorizedError,
-} from '@app/common/swagger/responses';
 import { JwtTokensService } from './jwt.tokens.service';
 import { MessagePattern } from '@nestjs/microservices';
-import { REGISTER } from '../../../../api-gateway/src/modules/auth/constants';
+import {
+  LOGIN,
+  REFRESH,
+  REGISTER,
+  SIGNOUT,
+  VALIDATE_USER,
+} from '../../../../api-gateway/src/modules/auth/constants';
 import { Payload } from '@nestjs/microservices';
 
 @ApiTags('Auth')
@@ -38,7 +22,30 @@ export class AuthController {
   ) {}
 
   @MessagePattern(REGISTER)
-  public async register(@Payload('dto') dto: AuthDto, res: Response) {
-    return this.authService.register(dto, res);
+  public async register(@Payload('dto') dto: AuthDto) {
+    return this.authService.register(dto);
+  }
+
+  @MessagePattern(LOGIN)
+  public async login(@Payload('dto') dto: AuthDto) {
+    return this.authService.login(dto);
+  }
+
+  @MessagePattern(SIGNOUT)
+  public async signout(@Payload('userId') userId: number) {
+    return this.authService.signOut(userId);
+  }
+
+  @MessagePattern(REFRESH)
+  public async refreshTokens(
+    @Payload('userId') userId: number,
+    @Payload('refreshToken') refreshToken: string,
+  ) {
+    return this.jwtTokenService.refreshTokens(userId, refreshToken);
+  }
+
+  @MessagePattern(VALIDATE_USER)
+  public async validateUser(@Payload('email') email: string) {
+    return this.authService.validateUser(email);
   }
 }
