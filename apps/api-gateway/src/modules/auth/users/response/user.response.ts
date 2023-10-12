@@ -23,12 +23,12 @@ export class Meetup {
   meetupCreator: number;
 }
 
-export class UsersResponse {
+export class UserResponse {
   @ApiProperty()
   id: number;
 
   @ApiProperty()
-  email: string;
+  login: string;
 
   @ApiProperty()
   password: string;
