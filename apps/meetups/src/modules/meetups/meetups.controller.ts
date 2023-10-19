@@ -9,7 +9,7 @@ import {
   DELETE_MEETUP,
   GET_MEETUP_BY_CORDS,
   MEETUP_BY_ID,
-} from '../../../../api-gateway/src/modules/meetups/constants';
+} from '../../../../api-gateway/src/modules/meetups/modules/meetups/constants';
 
 @Controller()
 export class MeetupsController {

@@ -3,7 +3,7 @@ import { MeetupsService } from './meetups.service';
 import { MeetupsController } from './meetups.controller';
 import { PrismaModule } from '@app/common/db/prisma.module';
 import { RmqModule } from '@app/common';
-import { ReportsGatewayModule } from './reports/reports.module';
+import { ReportsGatewayModule } from '../reports/reports.module';
 
 @Module({
   imports: [

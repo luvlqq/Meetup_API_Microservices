@@ -10,7 +10,7 @@ import {
   REGISTER,
   SIGNOUT,
   VALIDATE_USER,
-} from '../../../../api-gateway/src/modules/auth/constants';
+} from '../../../../api-gateway/src/modules/auth/modules/auth/constants';
 import { Payload } from '@nestjs/microservices';
 
 @ApiTags('Auth')

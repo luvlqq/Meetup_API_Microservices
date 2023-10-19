@@ -3,7 +3,7 @@ import { EventPattern } from '@nestjs/microservices';
 import {
   GENERATE_CSV,
   GENERATE_PDF,
-} from '../../../../api-gateway/src/modules/meetups/constants';
+} from '../../../../api-gateway/src/modules/meetups/modules/meetups/constants';
 import { ReportsService } from './reports.service';
 
 @Controller()

@@ -14,8 +14,8 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { GetCurrentUserId } from '../decorators';
-import { MeetupResponse } from '../../meetups/response';
+import { GetCurrentUserId } from '../auth/decorators';
+import { MeetupResponse } from '../../../meetups/modules/meetups/response';
 import {
   BadRequestError,
   UnauthorizedError,

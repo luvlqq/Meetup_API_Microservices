@@ -27,7 +27,7 @@ import {
   DtoUnauthorized,
   UnauthorizedError,
 } from '@app/common/swagger/responses';
-import { JwtTokensService } from 'apps/auth/src/modules/auth/jwt.tokens.service';
+import { JwtTokensService } from '../../../../../../auth/src/modules/auth/jwt.tokens.service';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')

@@ -20,7 +20,7 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { CreateMeetupDto, GetMeetupDto, UpdateMeetupDto } from './dto';
-import { GetCurrentUserId } from '../../../../auth/src/modules/auth/decorators';
+import { GetCurrentUserId } from '../../../../../../auth/src/modules/auth/decorators';
 import { MeetupResponse } from './response';
 import { AccessDenied } from '@app/common/swagger/responses';
 import { SwaggerMeetups } from '@app/common/swagger/decorators/meetup.decorator';

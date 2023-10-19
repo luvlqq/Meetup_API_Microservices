@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { GENERATE_CSV, GENERATE_PDF } from '../constants';
+import { GENERATE_CSV, GENERATE_PDF } from '../meetups/constants';
 
 @Injectable()
 export class ReportsService {

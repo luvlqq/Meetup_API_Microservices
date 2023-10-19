@@ -6,7 +6,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import {
   GET_USER_INFO,
   SUBSCRIBE_TO_MEETUP,
-} from '../../../../api-gateway/src/modules/auth/users/constants';
+} from '../../../../api-gateway/src/modules/auth/modules/users/constants';
 
 @Controller('users')
 export class UsersController {

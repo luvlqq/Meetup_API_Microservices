@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from '@app/common/config/configService/configuration';
 import { RmqModule } from '@app/common';
 import { UsersMicroserviceModule } from '../users/users.module';
+import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersMicroserviceModule } from '../users/users.module';
     }),
     RmqModule,
     UsersMicroserviceModule,
+    UploadsModule,
   ],
   controllers: [AuthController],
   providers: [
