@@ -11,10 +11,11 @@ datasource db {
 
 model User {
   id              Int      @id @default(autoincrement())
-  email           String   @unique
   password        String
   role            UserRole @default(USER)
   hashRt          String?
+  email           String   @unique
+  userImage       String?
   createdMeetups  Meetup[] @relation("MeetupCreator")
   followedMeetups Meetup[] @relation("MeetupFollower")
 }
@@ -26,10 +27,10 @@ model Meetup {
   place           String
   date            DateTime
   tags            String[]
-  long            Float
-  lat             Float
-  meetupOwner     User?    @relation("MeetupCreator", fields: [meetupCreator], references: [id])
   meetupCreator   Int?
+  lat             Float
+  long            Float
+  meetupOwner     User?    @relation("MeetupCreator", fields: [meetupCreator], references: [id])
   meetupFollowers User[]   @relation("MeetupFollower")
 }
 
