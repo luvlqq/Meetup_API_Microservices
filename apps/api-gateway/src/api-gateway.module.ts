@@ -8,6 +8,7 @@ import { AtGuard } from '../../auth/src/modules/auth/guards';
 import { APP_GUARD } from '@nestjs/core';
 import { ReportsGatewayModule } from './modules/meetups/modules/reports/reports.module';
 import { UploadsGatewayModule } from './modules/auth/modules/uploads/uploads.module';
+import { ElasticGatewayModule } from './modules/meetups/modules/elastic/elastic.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UploadsGatewayModule } from './modules/auth/modules/uploads/uploads.mod
     UploadsGatewayModule,
     UsersGatewayModule,
     ReportsGatewayModule,
+    ElasticGatewayModule,
   ],
   providers: [
     AtGuard,

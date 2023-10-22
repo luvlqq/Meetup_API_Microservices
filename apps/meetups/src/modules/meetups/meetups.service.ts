@@ -7,12 +7,14 @@ import {
 import { CreateMeetupDto, UpdateMeetupDto, GetMeetupDto } from './dto';
 import { MeetupResponse } from './response';
 import { MeetupsRepository } from './meetups.repository';
+import { ElasticMicroserviceService } from '../elastic/elastic.service';
 
 @Injectable()
 export class MeetupsService {
   constructor(
     private readonly repository: MeetupsRepository,
     private readonly logger: Logger,
+    private readonly elasticSearch: ElasticMicroserviceService,
   ) {}
 
   public async createAMeetup(
@@ -22,6 +24,7 @@ export class MeetupsService {
     try {
       await this.getUserRole(userId);
       const result = await this.repository.createAMeetup(userId, dto);
+      await this.elasticSearch.indexMeetups(result);
       this.logger.log('Create a meetup: ', result);
       return result;
     } catch (e) {
@@ -106,6 +109,15 @@ export class MeetupsService {
       throw new BadRequestException('No meetup with this id');
     }
     return meetup;
+  }
+
+  public async searchForPosts(text: string) {
+    const results = await this.elasticSearch.searchMeetups(text);
+    const ids = results.map((result) => result);
+    if (!ids.length) {
+      return [];
+    }
+    return this.repository.getMeetupById(ids);
   }
 
   public async getUserRole(userId: number): Promise<void> {

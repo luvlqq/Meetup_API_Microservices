@@ -7,3 +7,5 @@ export const TEST = 'meetups/testss';
 export const GET_MEETUP_BY_CORDS = 'meetups/getMeetupsByCords';
 export const GENERATE_CSV = 'reports/csv';
 export const GENERATE_PDF = 'reports/pdf';
+
+export const ELASTIC = 'smart/elastic';

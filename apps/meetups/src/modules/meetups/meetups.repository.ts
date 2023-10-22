@@ -8,7 +8,7 @@ import { MeetupResponse } from './response';
 export class MeetupsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  public async getMeetupById(id: number): Promise<MeetupResponse> {
+  public async getMeetupById(id: number | any): Promise<MeetupResponse> {
     return this.prisma.meetup.findUnique({ where: { id: id } });
   }
 

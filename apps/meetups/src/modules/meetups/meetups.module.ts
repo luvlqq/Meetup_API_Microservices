@@ -10,6 +10,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthMicroserviceModule } from '../../../../auth/src/modules/auth/auth.module';
 import { UsersMicroserviceModule } from '../../../../auth/src/modules/users/users.module';
 import { ReportsMicroserviceModule } from '../reports/reports.module';
+import { ElasticMicroserviceModule } from '../elastic/elastic.module';
+import { ElasticMicroserviceService } from '../elastic/elastic.service';
 
 @Module({
   imports: [
@@ -19,11 +21,13 @@ import { ReportsMicroserviceModule } from '../reports/reports.module';
     AuthMicroserviceModule,
     UsersMicroserviceModule,
     ReportsMicroserviceModule,
+    ElasticMicroserviceModule,
   ],
   controllers: [MeetupsController],
   providers: [
     MeetupsService,
     MeetupsRepository,
+    ElasticMicroserviceService,
     Logger,
     AtGuard,
     {

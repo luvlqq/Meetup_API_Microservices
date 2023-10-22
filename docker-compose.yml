@@ -30,30 +30,32 @@ services:
       - '5672:5672'
       - '15672:15672'
 
-#  elasticsearch:
-#    image: elasticsearch:7.17.13
-#    container_name: elasticsearch
-#    environment:
-#      - discovery.type=single-node
-#      - xpack.security.enabled=false
-#    ports:
-#      - '9200:9200'
-#      - '9300:9300'
+  elasticsearch:
+    mem_limit: 4100m
+    image: elasticsearch:7.17.9
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - '9200:9200'
+      - '9300:9300'
 
-#  kibana:
-#    image: kibana:7.17.13
-#    container_name: kibana
-#    depends_on:
-#      - elasticsearch
-#    volumes:
-#      - kibana-data:/usr/share/kibana/data
-#    environment:
-#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-#    ports:
-#      - '5601:5601'
+  kibana:
+    mem_limit: 512m
+    image: kibana:7.17.9
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - '5601:5601'
 
   gateway:
-    mem_limit: 512m
+    mem_limit: 1024m
     build:
       context: ./
       dockerfile: ./apps/api-gateway/Dockerfile
@@ -90,7 +92,7 @@ services:
     command: npm run start:dev auth && npx prisma migrate dev
 
   meetups:
-    mem_limit: 512m
+    mem_limit: 1024m
     build:
       context: ./
       dockerfile: ./apps/meetups/Dockerfile
@@ -104,6 +106,5 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     command: npm run start:dev meetups && npx prisma migrate dev
-
-#volumes:
-#  kibana-data:
+volumes:
+  kibana-data:
