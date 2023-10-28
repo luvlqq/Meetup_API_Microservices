@@ -10,16 +10,16 @@ async function hashData(password) {
 
 const userData: Prisma.UserCreateInput[] = [
   {
-    login: 'yadjdiva',
+    email: 'yadjdiva',
     password: '',
   },
   {
-    login: 'admin',
+    email: 'admin',
     password: '',
     role: 'ADMIN',
   },
   {
-    login: 'superadmin',
+    email: 'superadmin',
     password: '',
     role: 'ADMIN',
   },

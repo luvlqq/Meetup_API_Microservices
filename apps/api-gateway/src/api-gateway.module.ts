@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import configuration from '@app/common/config/configService/configuration';
-import { MeetupsMicroserviceModule } from './modules/meetups/meetups.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { UsersModule } from './modules/users/users.module';
-import { RmqModule } from '@app/common';
-import { MEETUPS_SERVICE } from '../../meetups/src/constants';
+import { MeetupsGatewayModule } from './modules/meetups/modules/meetups/meetups.module';
+import { AuthGatewayModule } from './modules/auth/modules/auth/auth.module';
+import { UsersGatewayModule } from './modules/auth/modules/users/users.module';
+import { AtGuard } from '../../auth/src/modules/auth/guards';
+import { APP_GUARD } from '@nestjs/core';
+import { ReportsGatewayModule } from './modules/meetups/modules/reports/reports.module';
+import { UploadsGatewayModule } from './modules/auth/modules/uploads/uploads.module';
+import { ElasticGatewayModule } from './modules/meetups/modules/elastic/elastic.module';
 
 @Module({
   imports: [
@@ -13,9 +16,19 @@ import { MEETUPS_SERVICE } from '../../meetups/src/constants';
       load: [configuration],
       isGlobal: true,
     }),
-    MeetupsMicroserviceModule,
-    AuthModule,
-    UsersModule,
+    MeetupsGatewayModule,
+    AuthGatewayModule,
+    UploadsGatewayModule,
+    UsersGatewayModule,
+    ReportsGatewayModule,
+    ElasticGatewayModule,
+  ],
+  providers: [
+    AtGuard,
+    {
+      provide: APP_GUARD,
+      useClass: AtGuard,
+    },
   ],
 })
 export class ApiGatewayModule {}

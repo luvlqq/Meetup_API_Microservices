@@ -28,7 +28,7 @@ export class UsersResponse {
   id: number;
 
   @ApiProperty()
-  login: string;
+  email: string;
 
   @ApiProperty()
   password: string;

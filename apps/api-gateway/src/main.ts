@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ApiGatewayModule } from './api-gateway.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from '@app/common/swagger/init/init.swagger';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
@@ -9,8 +10,9 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  app.useGlobalPipes(new ValidationPipe());
   app.enableShutdownHooks();
+  app.useGlobalPipes(new ValidationPipe());
+  app.use(cookieParser());
 
   process.on('SIGINT', async () => {
     Logger.log('Server close by user');

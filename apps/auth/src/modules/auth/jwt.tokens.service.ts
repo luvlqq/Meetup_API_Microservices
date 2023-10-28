@@ -19,12 +19,12 @@ export class JwtTokensService {
     private readonly repository: AuthRepository,
   ) {}
 
-  public async signToken(userId: number, login: string): Promise<Tokens> {
+  public async signToken(userId: number, email: string): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
-          login,
+          email,
         },
         {
           secret: this.configService.get<string>('ATSECRET'),
@@ -34,7 +34,7 @@ export class JwtTokensService {
       this.jwtService.signAsync(
         {
           sub: userId,
-          login,
+          email,
         },
         {
           secret: this.configService.get<string>('RTSECRET'),
@@ -78,23 +78,23 @@ export class JwtTokensService {
     if (!rtMatches) {
       throw new BadRequestException('Tokens are not the same!');
     }
-    const tokens = await this.signTokens(user.id, user.login);
+    const tokens = await this.signTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refreshToken);
   }
 
   public async putTokensToCookies(
     userId: number,
-    login: string,
+    email: string,
     res?: Response,
   ): Promise<void> {
-    const tokens = await this.signToken(userId, login);
+    const tokens = await this.signToken(userId, email);
     await this.accessTokenCookie(res, tokens.accessToken);
     await this.refreshTokenCookie(res, tokens.refreshToken);
     await this.refreshTokens(userId, tokens.refreshToken);
   }
 
-  public async signTokens(userId: number, login: string): Promise<Tokens> {
-    return this.signToken(userId, login);
+  public async signTokens(userId: number, email: string): Promise<Tokens> {
+    return this.signToken(userId, email);
   }
 
   public async updateRtHash(userId: number, rt: string): Promise<void> {

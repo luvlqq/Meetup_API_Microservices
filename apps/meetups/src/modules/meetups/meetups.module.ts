@@ -7,20 +7,27 @@ import { RmqModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
 import { AtGuard } from '../../../../auth/src/modules/auth/guards';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthModule } from '../../../../auth/src/modules/auth/auth.module';
-import { UsersModule } from '../../../../auth/src/modules/users/users.module';
+import { AuthMicroserviceModule } from '../../../../auth/src/modules/auth/auth.module';
+import { UsersMicroserviceModule } from '../../../../auth/src/modules/users/users.module';
+import { ReportsMicroserviceModule } from '../reports/reports.module';
+import { ElasticMicroserviceModule } from '../elastic/elastic.module';
+import { ElasticMicroserviceService } from '../elastic/elastic.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     PrismaModule,
     RmqModule,
-    AuthModule,
-    UsersModule,
+    AuthMicroserviceModule,
+    UsersMicroserviceModule,
+    ReportsMicroserviceModule,
+    ElasticMicroserviceModule,
   ],
+  controllers: [MeetupsController],
   providers: [
     MeetupsService,
     MeetupsRepository,
+    ElasticMicroserviceService,
     Logger,
     AtGuard,
     {

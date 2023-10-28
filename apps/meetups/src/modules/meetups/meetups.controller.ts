@@ -1,60 +1,64 @@
-import {Body, Controller, Param, ParseIntPipe, Query} from '@nestjs/common';
-import {MeetupsService} from './meetups.service';
-import {CreateMeetupDto, GetMeetupDto, UpdateMeetupDto} from './dto';
-import {GetCurrentUserId} from '../../../../auth/src/modules/auth/decorators';
-import {MeetupResponse} from './response';
-import {Ctx, EventPattern, MessagePattern, Payload, RmqContext,} from '@nestjs/microservices';
-import {ALL_MEETUPS} from './constants';
-import {RmqService} from '@app/common';
+import { Controller, Logger } from '@nestjs/common';
+import { MeetupsService } from './meetups.service';
+import { CreateMeetupDto, GetMeetupDto, UpdateMeetupDto } from './dto';
+import { MeetupResponse } from './response';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
+import { ALL_MEETUPS, CREATE_MEETUP } from './constants';
+import {
+  CHANGE_INFO,
+  DELETE_MEETUP,
+  GET_MEETUP_BY_CORDS,
+  MEETUP_BY_ID,
+} from '../../../../api-gateway/src/modules/meetups/modules/meetups/constants';
 
 @Controller()
 export class MeetupsController {
-  constructor(
-    private readonly meetupsService: MeetupsService,
-    private readonly rmqService: RmqService,
-  ) {}
+  constructor(private readonly meetupsService: MeetupsService) {}
 
-  @EventPattern(ALL_MEETUPS)
+  @MessagePattern(ALL_MEETUPS)
   public async getAllMeetups(
-    @Query() dto: GetMeetupDto,
+    @Payload('dto') dto: GetMeetupDto,
   ): Promise<MeetupResponse[] | string> {
     return this.meetupsService.getAllMeetups(dto);
   }
 
-  //
-  @MessagePattern('testss')
-  public async testss(@Payload() @Ctx() context: RmqContext) {
-    return await this.meetupsService.testss();
+  @MessagePattern(GET_MEETUP_BY_CORDS)
+  public async getMeetupsByCords(
+    @Payload('long') long: number,
+    @Payload('lat') lat: number,
+  ): Promise<MeetupResponse | string> {
+    Logger.log(`Log in meetups controller: ${long}, ${lat}`);
+    return this.meetupsService.getMeetupsByCords(long, lat);
   }
 
-  @EventPattern()
+  @MessagePattern(MEETUP_BY_ID)
   public async getMeetupById(
-    @Param('id', ParseIntPipe) id: number,
+    @Payload('id') id: number,
   ): Promise<MeetupResponse | string> {
     return this.meetupsService.getMeetupById(id);
   }
 
-  @EventPattern()
+  @MessagePattern(CREATE_MEETUP)
   public async createAMeetup(
-    @GetCurrentUserId() userId: number,
-    @Body() dto: CreateMeetupDto,
+    @Payload('userId') userId: number,
+    @Payload('dto') dto: CreateMeetupDto,
   ): Promise<MeetupResponse | string> {
     return this.meetupsService.createAMeetup(userId, dto);
   }
 
-  @EventPattern()
+  @EventPattern(CHANGE_INFO)
   public async changeInfoInMeetup(
-    @GetCurrentUserId() userId: number,
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateMeetupDto,
+    @Payload('userId') userId: number,
+    @Payload('id') id: number,
+    @Payload('dto') dto: UpdateMeetupDto,
   ): Promise<MeetupResponse | string> {
     return this.meetupsService.changeInfoInMeetup(userId, id, dto);
   }
 
-  @EventPattern()
+  @EventPattern(DELETE_MEETUP)
   public async deleteMeetupById(
-    @GetCurrentUserId() userId: number,
-    @Param('id', ParseIntPipe) id: number,
+    @Payload('userId') userId: number,
+    @Payload('id') id: number,
   ): Promise<MeetupResponse | string> {
     return this.meetupsService.deleteMeetupById(userId, id);
   }

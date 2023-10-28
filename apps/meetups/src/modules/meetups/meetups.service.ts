@@ -1,24 +1,20 @@
 import {
   BadRequestException,
   HttpException,
-  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
 import { CreateMeetupDto, UpdateMeetupDto, GetMeetupDto } from './dto';
 import { MeetupResponse } from './response';
 import { MeetupsRepository } from './meetups.repository';
-import { MEETUPS_SERVICE } from '../../constants';
-import { ClientProxy } from '@nestjs/microservices';
-import { lastValueFrom } from 'rxjs';
-import { PrismaService } from '@app/common/db/prisma.service';
+import { ElasticMicroserviceService } from '../elastic/elastic.service';
 
 @Injectable()
 export class MeetupsService {
   constructor(
     private readonly repository: MeetupsRepository,
     private readonly logger: Logger,
-    private readonly prisma: PrismaService,
+    private readonly elasticSearch: ElasticMicroserviceService,
   ) {}
 
   public async createAMeetup(
@@ -28,16 +24,13 @@ export class MeetupsService {
     try {
       await this.getUserRole(userId);
       const result = await this.repository.createAMeetup(userId, dto);
+      await this.elasticSearch.indexMeetups(result);
       this.logger.log('Create a meetup: ', result);
       return result;
     } catch (e) {
-      await this.logger.error(e);
+      this.logger.error(e);
       return e;
     }
-  }
-
-  public async testss() {
-    await this.prisma.user.findMany();
   }
 
   public async getAllMeetups(
@@ -48,7 +41,18 @@ export class MeetupsService {
       this.logger.log('Show all meetups');
       return result;
     } catch (e) {
-      await this.logger.error(e);
+      this.logger.error(e);
+      return e;
+    }
+  }
+
+  public async getMeetupsByCords(long: number, lat: number) {
+    try {
+      const result = await this.repository.getMeetupsByCords(long, lat);
+      this.logger.log('Meetup coords find');
+      return result;
+    } catch (e) {
+      this.logger.error(e);
       return e;
     }
   }
@@ -76,7 +80,7 @@ export class MeetupsService {
       this.logger.log(`Delete meetup. Id: ${id}`);
       return result;
     } catch (e) {
-      await this.logger.error(e);
+      this.logger.error(e);
       return e;
     }
   }
@@ -94,7 +98,7 @@ export class MeetupsService {
       this.logger.log(`Change meetup info. Id: ${id}`, result);
       return result;
     } catch (e) {
-      await this.logger.error(e);
+      this.logger.error(e);
       return e;
     }
   }
@@ -105,6 +109,15 @@ export class MeetupsService {
       throw new BadRequestException('No meetup with this id');
     }
     return meetup;
+  }
+
+  public async searchForPosts(text: string) {
+    const results = await this.elasticSearch.searchMeetups(text);
+    const ids = results.map((result) => result);
+    if (!ids.length) {
+      return [];
+    }
+    return this.repository.getMeetupById(ids);
   }
 
   public async getUserRole(userId: number): Promise<void> {
