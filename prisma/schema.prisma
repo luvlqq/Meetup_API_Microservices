@@ -1,0 +1,40 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+  engineType    = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  password        String
+  role            UserRole @default(USER)
+  hashRt          String?
+  email           String   @unique
+  userImage       String?
+  createdMeetups  Meetup[] @relation("MeetupCreator")
+  followedMeetups Meetup[] @relation("MeetupFollower")
+}
+
+model Meetup {
+  id              Int      @id @default(autoincrement())
+  name            String
+  description     String
+  place           String
+  date            DateTime
+  tags            String[]
+  meetupCreator   Int?
+  lat             Float
+  long            Float
+  meetupOwner     User?    @relation("MeetupCreator", fields: [meetupCreator], references: [id])
+  meetupFollowers User[]   @relation("MeetupFollower")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}

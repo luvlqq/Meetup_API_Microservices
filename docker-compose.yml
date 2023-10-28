@@ -1,0 +1,110 @@
+version: '3'
+
+services:
+  postgres:
+    mem_limit: 512m
+    image: postgres:15
+    restart: always
+    ports:
+      - '5432:5432'
+    env_file:
+      - .env
+
+  postgres_admin:
+    mem_limit: 512m
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - '15432:80'
+
+  rabbitmq:
+    mem_limit: 512m
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    volumes:
+      - /var/lib/rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+  elasticsearch:
+    mem_limit: 4100m
+    image: elasticsearch:7.17.9
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+
+  kibana:
+    mem_limit: 512m
+    image: kibana:7.17.9
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - '5601:5601'
+
+  gateway:
+    mem_limit: 1024m
+    build:
+      context: ./
+      dockerfile: ./apps/api-gateway/Dockerfile
+      target: development
+    ports:
+      - '3001:3001'
+    env_file:
+      - ./apps/api-gateway/.env
+    depends_on:
+      - auth
+      - meetups
+      - postgres
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev api-gateway && npx prisma migrate dev
+
+  auth:
+    mem_limit: 512m
+    build:
+      context: ./
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - meetups
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev auth && npx prisma migrate dev
+
+  meetups:
+    mem_limit: 1024m
+    build:
+      context: ./
+      dockerfile: ./apps/meetups/Dockerfile
+      target: development
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev meetups && npx prisma migrate dev
+volumes:
+  kibana-data:
